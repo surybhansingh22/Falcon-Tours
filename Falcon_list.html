@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Falcon Daily Booking List</title>
+    <style>
+     :root {
+  --primary: #4f46e5;
+  --background: #f8fafc;
+  --border: #e2e8f0;
+  --text: #1e293b;
+  --text-light: #64748b;
+  --hover: #f1f5f9;
+  --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+body {
+  background: var(--background);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.container {
+  width: 98%;
+  margin: 0 auto;
+  background: white;
+  border-radius: 1rem;
+  box-shadow: var(--shadow);
+  padding: 1.5rem;
+}
+
+.table-wrapper {
+  width: 100%;
+  margin: 0 auto; /* Center the table-wrapper */
+  overflow-x: auto;
+  border: 1px solid var(--border, #ddd); /* Use fallback color if variable is not defined */
+  border-radius: 0.5rem;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.05);
+  background-color: var(--background, #fff);
+}
+
+.table-wrapper::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+  background: var(--background, #f9f9f9);
+  border-radius: 4px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: max-content;
+  font-size: 0.925rem;
+}
+
+th, td {
+  padding: 0.875rem;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+th {
+  background: var(--background);
+  color: var(--text);
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  transition: background-color 0.2s;
+}
+
+td {
+  color: var(--text-light);
+  transition: background-color 0.2s;
+}
+
+tr:hover td {
+  background: var(--hover);
+}
+
+/* Column widths */
+th:nth-child(1), td:nth-child(1) { min-width: 45px; }
+th:nth-child(2), td:nth-child(2) { min-width: 80px; }
+th:nth-child(3), td:nth-child(3) { min-width: 80px; }
+th:nth-child(4), td:nth-child(4) { min-width: 120px; }
+th:nth-child(5), td:nth-child(5) { min-width: 60px; }
+th:nth-child(6), td:nth-child(6) { min-width: 60px; }
+th:nth-child(7), td:nth-child(7) { min-width: 60px; }
+th:nth-child(8), td:nth-child(8) { min-width: 80px; }
+th:nth-child(9), td:nth-child(9) { min-width: 60px; }
+th:nth-child(10), td:nth-child(10) { min-width: 60px; }
+th:nth-child(11), td:nth-child(11) { min-width: 80px; }
+th:nth-child(12), td:nth-child(12) { min-width: 60px; }
+th:nth-child(13), td:nth-child(13) { min-width: 120px; }
+th:nth-child(14), td:nth-child(14) { min-width: 40px; }
+th:nth-child(15), td:nth-child(15) { min-width: 40px; }
+th:nth-child(16), td:nth-child(16) { min-width: 80px; }
+th:nth-child(17), td:nth-child(17) { min-width: 60px; }
+th:nth-child(18), td:nth-child(18) { min-width: 80px; }
+th:nth-child(19), td:nth-child(19) { min-width: 40px; }
+th:nth-child(20), td:nth-child(20) { min-width: 60px; }
+th:nth-child(21), td:nth-child(21) { min-width: 80px; }
+th:nth-child(22), td:nth-child(22) { min-width: 40px; }
+th:nth-child(23), td:nth-child(23) { min-width: 120px; }
+th:nth-child(24), td:nth-child(24) { min-width: 100px; }
+th:nth-child(25), td:nth-child(25) { min-width: 150px; }
+th:nth-child(26), td:nth-child(26) { min-width: 150px; }
+th:nth-child(27), td:nth-child(27) { 
+  min-width: 150px;
+  max-width: 250px;
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+.status-cell {
+  text-align: center;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.status-cell[style*="orange"] {
+  background: #fff7ed;
+  color: #ea580c;
+  box-shadow: 0 0 0 1px #ea580c25;
+}
+
+.status-cell[style*="lightblue"] {
+  background: #eff6ff;
+  color: #2563eb;
+  box-shadow: 0 0 0 1px #2563eb25;
+}
+
+.status-cell[style*="lightgreen"] {
+  background: #f0fdf4;
+  color: #16a34a;
+  box-shadow: 0 0 0 1px #16a34a25;
+}
+
+
+.custom-button {
+  max-width: 20rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  background-color: #007bff; /* Bootstrap Primary Blue */
+  color: #ffffff;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.custom-button:hover {
+  background-color: #0056b3; /* Darker Blue on Hover */
+  transform: scale(1.05); /* Slight Scale Effect on Hover */
+}
+
+.button-link {
+  color: #ffffff;
+  text-decoration: none;
+  display: block;
+  width: 100%; /* Ensure full clickable area */
+  text-align: center;
+}
+
+.button-link:hover {
+  text-decoration: underline;
+}
+.center-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50px; /* Full viewport height */
+  text-align: center; /* Center align text */
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  th, td {
+    font-size: 0.8rem;
+    padding: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  th, td {
+    font-size: 0.7rem;
+    padding: 0.4rem;
+  }
+}
+
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="center-container">
+        <h1>Booking Data Management</h1>
+        <button type="button" class="btn btn-primary custom-button">
+          <a href="index.html" class="button-link">Add Booking</a>
+        </button>
+      </div>
+      <div class="table-wrapper">
+      <table id="bookingTable">
+        <thead>
+          <tr>
+            <th>Ser No</th>
+            <th>Unique ID</th>
+            <th>Booking Ref</th>
+            <th>Client Name</th>
+            <th>Client Mobile</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Travel Plan</th>
+            <th>Vehicle Type</th>
+            <th>Vehicle No</th>
+            <th>Driver Name</th>
+            <th>Driver No</th>
+            <th>Vehicle Duty</th>
+            <th>Extra KM</th>
+            <th>Extra Hours</th>
+            <th>Vendor Taxi</th>
+            <th>Vendor Cost</th>
+            <th>Hotel</th>
+            <th>Days</th>
+            <th>Hotel Cost</th>
+            <th>Total Cost</th>
+            <th>GST</th>
+            <th>Grand Total</th>
+            <th>Profit</th>
+            <th>Client Payment Status</th>
+            <th>Vendor Payment Status</th>
+            <th>Remark</th>
+          </tr>
+        </thead>
+        <tbody id="bookingTableBody">
+          <!-- Rows will be populated dynamically -->
+        </tbody>
+      </table>
+    </div>
+    </div>
+    <script>
+      const apiUrl =
+        "https://script.google.com/macros/s/AKfycbwbADkhXtFeliSQuPxaMHkk40fMMNd0bBScszH94UfbIsBRAw0kff4nYX4yFgo6j4n29Q/exec";
+
+      // Fetch Data and Populate Table
+      async function fetchData() {
+        try {
+          const response = await fetch(`${apiUrl}?action=get`);
+          const data = await response.json();
+          console.log("Fetched Data:", data); // Log the data
+          const tableBody = document.getElementById("bookingTableBody");
+          tableBody.innerHTML = ""; // Clear existing rows
+
+          if (!Array.isArray(data)) {
+            console.error("API did not return an array:", data);
+            alert("Unexpected data format from API.");
+            return;
+          }
+
+          data.forEach((row, index) => {
+            const tableRow = document.createElement("tr");
+            tableRow.innerHTML = `
+            <td>${row.ser_no}</td>
+            <td>${row.unique_id}</td>
+            <td>${row.booking_ref}</td>
+            <td>${row.client_name}</td>
+            <td>${row.client_mobile}</td>
+            <td>${formatDate(row.date)}</td>
+          <td>${formatTime(row.time)}</td>
+            <td>${row.travel_plan}</td>
+            <td>${row.vehicle_type}</td>
+            <td>${row.vehicle_no}</td>
+            <td>${row.driver_name}</td>
+            <td>${row.driver_no}</td>
+            <td>${row.vehicle_duty}</td>
+            <td>${row.extra_km}</td>
+            <td>${row.extra_hours}</td>
+            <td>${row.vendor_taxi}</td>
+            <td>${row.vendor_cost}</td>
+            <td>${row.hotel}</td>
+            <td>${row.days}</td>
+            <td>${row.hotel_cost}</td>
+            <td>${row.total_cost}</td>
+            <td>${row.gst}</td>
+            <td>${row.grand_total}</td>
+            <td>${row.profit}</td>
+            <td class="status-cell client-status">${row.client_payment_status}</td>
+            <td class="status-cell vendor-status">${row.vendor_payment_status}</td>
+            <td>${row.remark}</td>
+          `;
+            tableBody.appendChild(tableRow);
+
+            // Apply background color based on payment status
+            const clientStatusCell = tableRow.querySelector(".client-status");
+            const vendorStatusCell = tableRow.querySelector(".vendor-status");
+
+            setStatusBackground(clientStatusCell, row.client_payment_status);
+            setStatusBackground(vendorStatusCell, row.vendor_payment_status);
+          });
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      }
+
+      // Helper function to set background color based on status
+      function setStatusBackground(cell, status) {
+        if (status.toLowerCase() === "due") {
+          cell.style.backgroundColor = "orange";
+          cell.style.color = "white";
+        } else if (
+          status.toLowerCase() === "partially paid" ||
+          status.toLowerCase() === "partially received"
+        ) {
+          cell.style.backgroundColor = "lightblue";
+          cell.style.color = "black";
+        } else if (
+          status.toLowerCase() === "fully paid" ||
+          status.toLowerCase() === "fully received"
+        ) {
+          cell.style.backgroundColor = "lightgreen";
+          cell.style.color = "black";
+        }
+      }
+
+// Helper function to format date
+function formatDate(isoDate) {
+    const date = new Date(isoDate);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
+
+  // Helper function to format time
+  function formatTime(isoTime) {
+    const time = new Date(isoTime);
+    const hours = time.getHours() % 12 || 12; // Convert to 12-hour format
+    const minutes = String(time.getMinutes()).padStart(2, '0');
+    const period = time.getHours() >= 12 ? "PM" : "AM";
+    return `${hours}:${minutes} ${period}`;
+  }
+
+
+      // Initial Fetch
+      fetchData();
+    </script>
+  </body>
+</html>

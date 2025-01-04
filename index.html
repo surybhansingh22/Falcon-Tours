@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Booking Form</title>
+    <style>
+      :root {
+        --primary: #4f46e5;
+        --primary-hover: #4338ca;
+        --background: #f8fafc;
+        --card: #ffffff;
+        --text: #1e293b;
+        --text-light: #64748b;
+        --border: #e2e8f0;
+        --success: #22c55e;
+        --error: #ef4444;
+        --section-gap: 2rem;
+      }
+
+      /* Custom Modal Styles */
+      .modal-content {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 2rem;
+        border-radius: 1rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        z-index: 1000;
+        max-width: 90%;
+        width: 400px;
+      }
+
+      .modal h3 {
+        margin-bottom: 1rem;
+        color: var(--primary);
+      }
+
+      .modal p {
+        margin-bottom: 1.5rem;
+      }
+
+      .modal-button {
+        padding: 10px 20px;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .modal-button:hover {
+        background: var(--primary-hover);
+      }
+
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", -apple-system, sans-serif;
+        background: var(--background);
+        color: var(--text);
+        line-height: 1.5;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .header h1 {
+        font-size: 2.5rem;
+        color: var(--primary);
+        margin-bottom: 0.5rem;
+      }
+
+      .form-container {
+        background: var(--card);
+        border-radius: 1rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        padding: 2rem;
+      }
+
+      .form-section {
+        background: #f8fafc;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        margin-bottom: var(--section-gap);
+      }
+
+      .form-section-title {
+        font-size: 1.25rem;
+        color: var(--primary);
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--primary);
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .form-group {
+        margin-bottom: 0.5rem;
+      }
+
+      .form-group label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        color: var(--text);
+      }
+
+      .form-control {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--border);
+        border-radius: 0.5rem;
+        font-size: 0.95rem;
+        transition: all 0.2s;
+      }
+
+      .form-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+      }
+
+      .form-control:read-only {
+        background-color: #f3f4f6;
+      }
+
+      select.form-control {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%234f46e5'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 1rem;
+        padding-right: 2.5rem;
+      }
+
+      .btn {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        text-align: center;
+        border: none;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        width: 100%;
+      }
+
+      .btn-primary {
+        background-color: var(--primary);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background-color: var(--primary-hover);
+      }
+
+      .btn-secondary {
+        background-color: #f3f4f6;
+        color: var(--text);
+      }
+
+      .btn-secondary:hover {
+        background-color: #e5e7eb;
+      }
+
+      .calculate-section {
+        background: #f0f9ff;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+
+      textarea.form-control {
+        resize: vertical;
+        min-height: 100px;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 1024px) {
+        .form-row {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          margin: 1rem auto;
+        }
+
+        .form-container {
+          padding: 1.5rem;
+        }
+
+        .form-row {
+          grid-template-columns: 1fr;
+          gap: 1rem;
+        }
+
+        .form-section {
+          padding: 1rem;
+        }
+      }
+
+      /* Custom Modal Styles */
+      .modal {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 2rem;
+        border-radius: 1rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        max-width: 90%;
+        width: 400px;
+      }
+
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+      }
+
+      .modal h3 {
+        margin-bottom: 1rem;
+        color: var(--primary);
+      }
+
+      .modal button {
+        margin-top: 1.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>Falcon Daily Booking Entry</h1>
+        <button type="button"
+        class="btn btn-primary" style="max-width: 20rem;">
+          <a href="Falcon_list.html" style="color: #ffffff;">View Bookings</a>
+        </button>
+      </div>
+
+      <form id="submit-to-google-sheet" class="form-container">
+        <!-- Booking & Client Identification Section -->
+        <div class="form-section">
+          <h2 class="form-section-title">
+            Booking Details & Client Information
+          </h2>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="ser_no">Serial Number</label>
+              <input
+                class="form-control"
+                type="text"
+                name="ser_no"
+                id="ser_no"
+                readonly
+                placeholder="Serial Number"
+              />
+            </div>
+            <div class="form-group">
+              <label for="unique_id">Unique ID</label>
+              <input
+                class="form-control"
+                type="text"
+                name="unique_id"
+                id="unique_id"
+                readonly
+                placeholder="Unique ID"
+              />
+            </div>
+            <div class="form-group">
+              <label for="booking_ref">Booking Reference</label>
+              <input
+                class="form-control"
+                type="text"
+                name="booking_ref"
+                id="booking_ref"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="client_name">Client Name</label>
+              <input
+                class="form-control"
+                type="text"
+                name="client_name"
+                id="client_name"
+              />
+            </div>
+            <div class="form-group">
+              <label for="client_mobile">Client Mobile</label>
+              <input
+                class="form-control"
+                type="number"
+                name="client_mobile"
+                id="client_mobile"
+              />
+            </div>
+            <div class="form-group">
+              <label for="travel_plan">Travel Plan</label>
+              <select
+                class="form-control"
+                name="travel_plan"
+                id="travel_plan"
+                required
+              >
+                <option value="">Select Plan</option>
+                <option value="Taxi Booking">Taxi Booking</option>
+                <option value="Hotel Booking">Hotel Booking</option>
+                <option value="Wedding">Wedding</option>
+                <option value="Hotel & Taxi">Hotel & Taxi</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vehicle Details & Vendor Section -->
+        <div class="form-section">
+          <h2 class="form-section-title">Travel Plan</h2>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="date">Date</label>
+              <input class="form-control" type="date" name="date" id="date" />
+            </div>
+            <div class="form-group">
+              <label for="time">Time</label>
+              <input class="form-control" type="time" name="time" id="time" />
+            </div>
+          </div>
+          <h2 class="form-section-title">Vehicle Information</h2>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="vehicle_type">Vehicle Type</label>
+              <select
+                class="form-control"
+                name="vehicle_type"
+                id="vehicle_type"
+                required
+              >
+                <option value="">Select Vehicle</option>
+                <option value="No Vehicle">No Vehicle</option>
+                <option value="Sedan">Sedan</option>
+                <option value="Ertiga">Ertiga</option>
+                <option value="Innova">Innova</option>
+                <option value="Crysta">Crysta</option>
+                <option value="Hycross">Hycross</option>
+                <option value="Tempo Traveller">Tempo Traveller</option>
+                <option value="Urbania">Urbania</option>
+                <option value="Bus 27STR">Bus 27 STR</option>
+                <option value="Bus 35STR">Bus 35 STR</option>
+                <option value="Bus 45STR">Bus 45 STR</option>
+                <option value="Luxury">Luxury</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="vehicle_no">Vehicle Number</label>
+              <input
+                class="form-control"
+                type="text"
+                name="vehicle_no"
+                id="vehicle_no"
+              />
+            </div>
+            <div class="form-group">
+              <label for="vehicle_duty">Vehicle Duty</label>
+              <input
+                class="form-control"
+                type="text"
+                name="vehicle_duty"
+                id="vehicle_duty"
+              />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="driver_name">Driver Name</label>
+              <input
+                class="form-control"
+                type="text"
+                name="driver_name"
+                id="driver_name"
+              />
+            </div>
+            <div class="form-group">
+              <label for="driver_no">Driver Contact</label>
+              <input
+                class="form-control"
+                type="number"
+                name="driver_no"
+                id="driver_no"
+              />
+            </div>
+            <div class="form-group">
+              <label for="vendor_taxi">Taxi Vendor</label>
+              <input
+                class="form-control"
+                type="text"
+                name="vendor_taxi"
+                id="vendor_taxi"
+              />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="extra_km">Extra KM</label>
+              <input
+                class="form-control"
+                type="number"
+                name="extra_km"
+                id="extra_km"
+              />
+            </div>
+            <div class="form-group">
+              <label for="extra_hours">Extra Hours</label>
+              <input
+                class="form-control"
+                type="number"
+                name="extra_hours"
+                id="extra_hours"
+              />
+            </div>
+            <div class="form-group">
+              <label for="vendor_cost">Vendor Cost</label>
+              <input
+                class="form-control"
+                type="number"
+                name="vendor_cost"
+                id="vendor_cost"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Hotel Details Section -->
+        <div class="form-section">
+          <h2 class="form-section-title">Hotel Information</h2>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="hotel_date">Check-in Date</label>
+              <input
+                class="form-control"
+                type="date"
+                name="hotel_date"
+                id="hotel_date"
+              />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="hotel_name">Hotel Name</label>
+              <input
+                class="form-control"
+                type="text"
+                name="hotel_name"
+                id="hotel_name"
+              />
+            </div>
+            <div class="form-group">
+              <label for="days">Number of Days</label>
+              <input class="form-control" type="number" name="days" id="days" />
+            </div>
+            <div class="form-group">
+              <label for="hotel_cost">Hotel Cost</label>
+              <input
+                class="form-control"
+                type="number"
+                name="hotel_cost"
+                id="hotel_cost"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Cost Calculation Section & Final Amounts Section -->
+        <div class="form-section calculate-section">
+          <h2 class="form-section-title">Cost Details</h2>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="total_cost">Total Cost</label>
+              <input
+                class="form-control"
+                type="number"
+                name="total_cost"
+                id="total_cost"
+              />
+            </div>
+            <div class="form-group">
+              <label for="gst">GST Applicable</label>
+              <select class="form-control" name="gst" id="gst">
+                <option value="">Select</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="Calculate">Calculate Total & Profit</label>
+              <button
+                type="button"
+                class="btn btn-primary"
+                onclick="calculate()"
+              >
+                Calculate Total & Profit
+              </button>
+            </div>
+          </div>
+          <h2 class="form-section-title">Final Amounts</h2>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="grand_total">Grand Total</label>
+              <input
+                class="form-control"
+                type="number"
+                name="grand_total"
+                id="grand_total"
+                readonly
+              />
+            </div>
+            <div class="form-group">
+              <label for="profit">Profit</label>
+              <input
+                class="form-control"
+                type="number"
+                name="profit"
+                id="profit"
+                readonly
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Status Section -->
+        <div class="form-section">
+          <h2 class="form-section-title">Payment Status</h2>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="client_payment_status">Client Payment Status</label>
+              <select
+                class="form-control"
+                name="client_payment_status"
+                id="client_payment_status"
+                required
+              >
+                <option value="">Select Status</option>
+                <option value="Fully Received">Fully Received</option>
+                <option value="Due">Due</option>
+                <option value="Partially Received">Partially Received</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="vendor_payment_status">Vendor Payment Status</label>
+              <select
+                class="form-control"
+                name="vendor_payment_status"
+                id="vendor_payment_status"
+                required
+              >
+                <option value="">Select Status</option>
+                <option value="Fully Paid">Fully Paid</option>
+                <option value="Due">Due</option>
+                <option value="Partially Paid">Partially Paid</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="remark">Remark</label>
+              <textarea
+                class="form-control"
+                name="remark"
+                id="remark"
+                placeholder="Any additional remarks"
+                rows="4"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+        <!-- Submit Section -->
+        <div class="form-section">
+          <!-- <button class="btn btn-primary" type="submit">Submit</button> -->
+          <button class="btn btn-primary" type="submit" id="submitButton">
+            Submit
+          </button>
+        </div>
+      </form>
+    </div>
+    <div id="customModal" style="display: none">
+      <div class="modal-content">
+        <h3 id="modalTitle"></h3>
+        <p id="modalMessage"></p>
+        <button id="modalButton" class="btn btn-primary">OK</button>
+      </div>
+      <div class="modal-overlay"></div>
+    </div>
+    <script>
+      function showModal(type, message) {
+        const modal = document.getElementById("customModal");
+        const modalTitle = document.getElementById("modalTitle");
+        const modalMessage = document.getElementById("modalMessage");
+        const modalButton = document.getElementById("modalButton");
+
+        modalTitle.textContent = type === "success" ? "Success" : "Error";
+        modalTitle.style.color = type === "success" ? "green" : "red";
+        modalMessage.textContent = message;
+
+        modal.style.display = "block";
+
+        modalButton.onclick = () => {
+          modal.style.display = "none";
+
+          if (type === "success") {
+            form.reset(); // Reset the form fields
+            window.location.reload(); // Reload the page to fetch a new unique ID and serial number
+          }
+        };
+      }
+
+      const scriptURL =
+        "https://script.google.com/macros/s/AKfycbwbADkhXtFeliSQuPxaMHkk40fMMNd0bBScszH94UfbIsBRAw0kff4nYX4yFgo6j4n29Q/exec";
+      const form = document.forms["submit-to-google-sheet"];
+      const submitButton = document.getElementById("submitButton");
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        // Disable the button and change its appearance
+        submitButton.disabled = true;
+        submitButton.style.backgroundColor = "green";
+        submitButton.style.cursor = "not-allowed";
+        submitButton.innerText = "Submitting...";
+
+        // Collect form data
+
+        var formData = new FormData(form);
+
+        fetch(scriptURL, { method: "POST", body: formData })
+          .then((response) => {
+            showModal("success", "Done: Submitted Successfully.");
+            resetButton();
+          })
+          .catch((error) => {
+            showModal(
+              "error",
+              "Error: Something went wrong. Please try again!"
+            );
+            resetButton();
+          });
+      });
+
+      function resetButton() {
+        submitButton.disabled = false;
+        submitButton.style.backgroundColor = "";
+        submitButton.style.cursor = "pointer";
+        submitButton.innerText = "Submit";
+      }
+      function generateSno() {
+        fetch(
+          "https://script.google.com/macros/s/AKfycbwbADkhXtFeliSQuPxaMHkk40fMMNd0bBScszH94UfbIsBRAw0kff4nYX4yFgo6j4n29Q/exec"
+        )
+          .then((response) => response.text()) // Get the serial number as plain text
+          .then((lastSerialNumber) => {
+            // Check if the response is empty or null
+            const nextSerialNumber =
+              lastSerialNumber && !isNaN(lastSerialNumber)
+                ? parseInt(lastSerialNumber) + 1 // Increment by 1
+                : 101; // Start from 101 if no serial number exists
+            document.getElementById("ser_no").value = nextSerialNumber;
+          })
+          .catch((error) => {
+            console.error("Error fetching last serial number:", error);
+          });
+      }
+
+      // Generate Unique ID.
+      function generateUniqueId() {
+        const randomPart = Math.floor(Math.random() * 9000000) + 1000000; // Generate a 7-digit random number
+        const uniqueId = `UID${randomPart}`;
+        document.getElementById("unique_id").value = uniqueId;
+      }
+
+      // Initialize fields on page load.
+      window.onload = function () {
+        generateSno();
+        generateUniqueId();
+      };
+
+      function calculate() {
+        // Get input values
+        const vendorCost =
+          parseFloat(document.getElementById("vendor_cost").value) || 0;
+        const hotelCost =
+          parseFloat(document.getElementById("hotel_cost").value) || 0;
+        const totalCost =
+          parseFloat(document.getElementById("total_cost").value) || 0;
+        const gst = document.getElementById("gst").value;
+
+        // Calculate grand total
+        let grandTotal = totalCost;
+        if (gst === "Yes") {
+          grandTotal = totalCost + totalCost * 0.05; // Add 5% GST
+        }
+
+        // Calculate profit
+        const profit = totalCost - (vendorCost + hotelCost);
+
+        // Set calculated values in respective fields
+        document.getElementById("grand_total").value = grandTotal.toFixed(2);
+        document.getElementById("profit").value = profit.toFixed(2);
+      }
+    </script>
+  </body>
+</html>
